@@ -1,30 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function Todo() {
   const [state, setState] = useState('');
-  const [data, setData] = useState([]);
+  const [data, setData] = useState(() => {
+    const storedData = localStorage.getItem('todos');
+    return storedData ? JSON.parse(storedData) : [];
+  });
 
-  const buttonstyle={
- backgroundColor:"#333",
- color:"white",
+  const buttonstyle = {
+    backgroundColor: "#333",
+    color: "white",
+  };
 
-
-
-
-
-
-  }
+  useEffect(() => {
+    localStorage.setItem('todos', JSON.stringify(data));
+  }, [data]);
 
   function addText(e) {
     setState(e.target.value);
-
   }
+
   function add() {
     if (state.trim() !== '') {
       setData([...data, state]);
     }
     setState('');
   }
+
   function Delete(index) {
     const newData = [...data];
     newData.splice(index, 1);
@@ -45,12 +47,11 @@ export default function Todo() {
     <>
       <div >
         <input
-        
           onChange={addText}
           type="text"
           aria-label="Search"
         />
-        <button  onClick={add}>
+        <button onClick={add}>
           add
         </button>
       </div>
@@ -60,7 +61,6 @@ export default function Todo() {
           <div className="todo-item" key={index}>
             <div>{item}</div>
             <div>
-              
               <button onClick={() => edit(index)} style={buttonstyle}>Edit</button>
               <button onClick={() => Delete(index)} style={buttonstyle}>
                 Delete
